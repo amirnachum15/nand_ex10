@@ -1,3 +1,5 @@
+import re
+
 """
 constants - name of key words
 """
@@ -46,6 +48,7 @@ class JackTokenizer:
         this function gets a list, and splits the buffer according to the char
         saving the char, and deleting (like in regular split)
         """
+        #checking if the char appears in the buffer
         char_occur = False
         for value in buffer:
             if char in value:
@@ -55,6 +58,7 @@ class JackTokenizer:
             return buffer
         tmp = []
         for buf in buffer:
+
             if char in buf:
                 #we need to split
                 splitted = buf.split(char)
@@ -66,10 +70,33 @@ class JackTokenizer:
                 tmp.append(buf)
         return tmp
 
+    def join_strings(self, buffer):
+        retVal = []
+        i = 0
+        while i < len(buffer):
+            buf = buffer[i]
+            if '"' in buf:
+                beginning = i
+                while '"' not in buffer[i+1]:
+                    i += 1
+                end = i + 1
+                i = end
+                joined_string = ""
+                for index in range(beginning, end + 1):
+                    joined_string += buffer[index]
+                    joined_string += ' '
+                joined_string = joined_string[:-1]
+                retVal.append(joined_string)
+            else:
+                retVal.append(buf)
+            i += 1
+
+        return retVal
 
     def _split_symbols(self, buffer):
         #first we will split everything in respect to spacebar
         retVal = buffer.split()
+        retVal = self.join_strings(retVal)
         for char_to_split in SYMBOLS:
             retVal = self._split_according_to_char(retVal, char_to_split)
         return retVal
@@ -109,19 +136,25 @@ class JackTokenizer:
         #TODO - check if value error is the right type of error (when i have wifi)
         if self.next_word[0] == '"' and self.next_word[-1] == '"':
             return STRING_CONST
+        pattern = re.compile(r"[\w]")
+        m = pattern.match(self.next_word[0])
+        if not m:
+            return "Unknown"
+        elif m.end() == len(self.next_word[0]):
+            return IDENTIFIER
 
         return "Unknown"
 
 
 
     def keyWord(self):
-        return True
+        return self.next_word[0]
 
     def symbol(self):
-        return True
+        return self.next_word[0]
 
     def identifier(self):
-        return True
+        return self.next_word[0]
 
     def intVal(self):
         retVal = int(self.next_word)
