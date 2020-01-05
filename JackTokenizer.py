@@ -77,7 +77,6 @@ class JackTokenizer:
             buf = buffer[i]
             if '"' in buf:
                 beginning = i
-                #TODO check if the string terminates inside buf
                 if buf.count('"') > 1:
                     splitted = buf.split('"')
                     j = 0
@@ -147,7 +146,6 @@ class JackTokenizer:
         except :
             #do nothing
             x = 0
-        #TODO - check if value error is the right type of error (when i have wifi)
         if self.next_word[0] == '"' and self.next_word[-1] == '"':
             return STRING_CONST
 
