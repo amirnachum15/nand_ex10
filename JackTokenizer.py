@@ -5,7 +5,7 @@ constants - name of key words
 KEYWORD = "keyword"
 SYMBOL = "symbol"
 IDENTIFIER = "identifier"
-INT_CONST = "int_const"
+INT_CONST = "integerConstant"
 STRING_CONST = "string_const"
 TOKEN_TYPES = [KEYWORD, SYMBOL, IDENTIFIER, INT_CONST, STRING_CONST]
 
@@ -32,13 +32,13 @@ NULL = "null"
 THIS = "this"
 KEYWORDS = [CLASS, METHOD, FUNCTION, CONSTRUCTOR, INT, BOOLEAN, CHAR, VOID, VAR, STATIC, FIELD,
             LET, DO, IF, ELSE, WHILE, RETURN, TRUE, FALSE, NULL, THIS]
+SYMBOLS = ["{", "}", "[", "]", "(", ")", ".", ",", ";", "+", "-", "*", "/", "&", "|", "<", ">", "=", "~"]
 
 class JackTokenizer:
     def __init__(self, input_file_path):
         self.input_file = open(input_file_path, "r")
         self.words = []
         self.index = 0
-        self.split_symbols = ["{", "}", "[", "]", "(", ")", ".", ",", ";", "+", "-", "*", "/", "&", "|", "<", ">", "=", "~"]
         self.next_word = ""
 
     def _split_according_to_char(self, buffer, char):
@@ -70,7 +70,7 @@ class JackTokenizer:
     def _split_symbols(self, buffer):
         #first we will split everything in respect to spacebar
         retVal = buffer.split()
-        for char_to_split in self.split_symbols:
+        for char_to_split in SYMBOLS:
             retVal = self._split_according_to_char(retVal, char_to_split)
         return retVal
 
@@ -98,6 +98,20 @@ class JackTokenizer:
     def tokenType(self):
         if self.next_word in KEYWORDS:
             return KEYWORD
+        if self.next_word in SYMBOLS:
+            return SYMBOL
+        #TODO - add a regex to check if next word is an identifier
+        try:
+            num = int(self.next_word)
+            return INT_CONST
+        except ValueError:
+            x = 0
+        #TODO - check if value error is the right type of error (when i have wifi)
+        if self.next_word[0] == '"' and self.next_word[-1] == '"':
+            return STRING_CONST
+
+        return "Unknown"
+
 
 
     def keyWord(self):
@@ -110,8 +124,11 @@ class JackTokenizer:
         return True
 
     def intVal(self):
-        return True
+        retVal = int(self.next_word)
+        return retVal
 
     def stringVal(self):
-        return True
+        #losing the first and last characters (which are ")
+        retVal = self.next_word[1:-1]
+        return retVal
 
