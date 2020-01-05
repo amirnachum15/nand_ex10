@@ -77,6 +77,20 @@ class JackTokenizer:
             buf = buffer[i]
             if '"' in buf:
                 beginning = i
+                #TODO check if the string terminates inside buf
+                if buf.count('"') > 1:
+                    splitted = buf.split('"')
+                    j = 0
+                    while j < len(splitted):
+                        var = splitted[j]
+                        if j == 0 or j == len(splitted) - 1:
+                            if var != '':
+                                retVal.append(var)
+                        else:
+                            retVal.append('"' + var + '"')
+                        j += 1
+                if i == len(buffer) - 1:
+                    break
                 while '"' not in buffer[i+1]:
                     i += 1
                 end = i + 1
@@ -127,15 +141,17 @@ class JackTokenizer:
             return KEYWORD
         if self.next_word in SYMBOLS:
             return SYMBOL
-        #TODO - add a regex to check if next word is an identifier
         try:
             num = int(self.next_word)
             return INT_CONST
-        except ValueError:
+        except :
+            #do nothing
             x = 0
         #TODO - check if value error is the right type of error (when i have wifi)
         if self.next_word[0] == '"' and self.next_word[-1] == '"':
             return STRING_CONST
+
+        #checking using a regular expression if the string is an identifier
         pattern = re.compile(r"[\w]")
         m = pattern.match(self.next_word[0])
         if not m:
@@ -144,8 +160,6 @@ class JackTokenizer:
             return IDENTIFIER
 
         return "Unknown"
-
-
 
     def keyWord(self):
         return self.next_word[0]
