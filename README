@@ -1,0 +1,21 @@
+tomer.hakak, amirnachum
+===============================================================================
+Amir Nachum, ID 212052849 amir.nachum@mail.huji.ac.il
+Tomer Hakak, ID 208251868 tomer.hakak@mail.huji.ac.il
+===============================================================================
+
+                           Project 10 - Compilation
+                           ----------------------------------------
+  
+
+Submitted Files
+---------------
+README - This file.
+JackAnalyzer.py - this is the where the main functino lives, creates compilation engine and handles directories/files
+JackTokenizer.py - gives the text as tokens with token types
+CompilationEngine.py - with the tokenizer writes the xml file as needed
+
+
+Remarks
+-------
+* we couldn't write <= >= & in the xml file (because of the file properties) so instead we wrote &lt &gt &amp

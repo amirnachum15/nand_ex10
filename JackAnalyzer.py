@@ -4,7 +4,9 @@ import sys
 
 
 def handle_file(file_path, output_stream):
-    CompilationEngine(file_path, output_stream)
+    engine = CompilationEngine(file_path, output_stream)
+    engine.CompileClass()
+
 
 def handle_dir(dir_full_path):
     slash = "/" if "/" in dir_full_path else "\\"
@@ -12,7 +14,9 @@ def handle_dir(dir_full_path):
     output_file_path = dir_full_path + slash + directory_name + ".xml"
     for file_name in os.listdir(dir_full_path):
         if file_name.endswith(".jack"):
-            handle_file(dir_full_path + slash + file_name, output_file_path)
+            file_full_path = dir_full_path + slash + file_name
+            output_file_name = file_full_path.split('.')[0] + ".xml"
+            handle_file(dir_full_path + slash + file_name, output_file_name)
 
 def main():
     argv = sys.argv
@@ -28,6 +32,8 @@ def main():
     elif os.path.isfile(argv[1]):
         file_full_path = argv[1]
         output_file_name = file_full_path.split('.')[0] + ".xml"
+        tmp = open(output_file_name, "w")
+        tmp.close()
         handle_file(file_full_path, output_file_name)
     else:
         print("did not enter a valid file/dir")

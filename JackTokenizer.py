@@ -8,7 +8,7 @@ KEYWORD = "keyword"
 SYMBOL = "symbol"
 IDENTIFIER = "identifier"
 INT_CONST = "integerConstant"
-STRING_CONST = "string_const"
+STRING_CONST = "stringConstant"
 TOKEN_TYPES = [KEYWORD, SYMBOL, IDENTIFIER, INT_CONST, STRING_CONST]
 
 CLASS = "class"
@@ -88,6 +88,8 @@ class JackTokenizer:
                         else:
                             retVal.append('"' + var + '"')
                         j += 1
+                    i += 1
+                    continue
                 if i == len(buffer) - 1:
                     break
                 while '"' not in buffer[i+1]:
@@ -107,6 +109,11 @@ class JackTokenizer:
         return retVal
 
     def _split_symbols(self, buffer):
+        #removing comments
+        if '//' in buffer:
+            index = buffer.find('//')
+            buffer = buffer[:index]
+
         #first we will split everything in respect to spacebar
         retVal = buffer.split()
         retVal = self.join_strings(retVal)
@@ -118,6 +125,25 @@ class JackTokenizer:
         if len(self.words) <= self.index:
             #this means that we need to read from the file
             buffer = self.input_file.readline()
+            while True:
+                if '//' in buffer:
+                    index = buffer.find('//')
+                    buffer = buffer[:index]
+                if '/**' in buffer:
+                    while '*/' not in buffer:
+                        buffer = self.input_file.readline()
+                    index = buffer.find('*/')
+                    buffer = buffer[index + 2:]
+                if buffer == '\n':
+                    if not buffer:
+                        # EOF reached
+                        return False
+                    buffer = self.input_file.readline()
+                    continue
+                if buffer.split() == []:
+                    buffer = self.input_file.readline()
+                    continue
+                break
             if not buffer:
                 #EOF reached
                 return False
@@ -160,13 +186,13 @@ class JackTokenizer:
         return "Unknown"
 
     def keyWord(self):
-        return self.next_word[0]
+        return self.next_word
 
     def symbol(self):
         return self.next_word[0]
 
     def identifier(self):
-        return self.next_word[0]
+        return self.next_word
 
     def intVal(self):
         retVal = int(self.next_word)
