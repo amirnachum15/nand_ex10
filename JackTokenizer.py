@@ -73,11 +73,14 @@ class JackTokenizer:
     def join_strings(self, buffer):
         retVal = []
         i = 0
+        #running on every word (seperated by spacebar)
         while i < len(buffer):
             buf = buffer[i]
             if '"' in buf:
+                #a comment is starting inside this word
                 beginning = i
-                if buf.count('"') > 1:
+                if buf[i:].count('"') > 1:
+                    #comment also ends in this word
                     splitted = buf.split('"')
                     j = 0
                     while j < len(splitted):
@@ -203,3 +206,34 @@ class JackTokenizer:
         retVal = self.next_word[1:-1]
         return retVal
 
+    def maybe_smart_split(self, line):
+        ret = line.split()
+        ret = self.join_strings(ret)
+        return ret
+
+# def smart_split(line):
+#     i = 0
+#     retVal = []
+#     begin = 0
+#     end = 0
+#     while i < len(line):
+#         if line[i] == '"':
+#             begin = i
+#             i += 1
+#             while line[i] != '"':
+#                 i += 1
+#             i += 1
+#             end = i
+#             retVal.append(line[begin:end])
+#             print(retVal[0])
+#         i += 1
+
+
+# funcput = "out \"start\" out "
+# smart_split(funcput)
+
+#code flow wanted:
+#split smartly (space bar and strings)
+#for strings change characters inside string - // -> /, /" -> ", /' -> ', same with \
+#handle comments (not inside strings) - types - //, /* */,
+#split according to other symbols

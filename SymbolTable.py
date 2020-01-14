@@ -15,7 +15,6 @@ class SymbolTable:
     def start_subroutine(self):
         self.subroutine_table = {}
 
-
     def define(self, name, type, kind):
         """
         :param name: name of the variable
